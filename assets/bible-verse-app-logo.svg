@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#f8f4e6" />
+  
+  <!-- Open book -->
+  <path d="M40 70 C40 60, 100 45, 160 70 L160 140 C100 115, 40 130, 40 140 Z" fill="#ffffff" stroke="#3b5998" stroke-width="3" />
+  <path d="M100 70 L100 140" stroke="#3b5998" stroke-width="3" />
+  
+  <!-- Pages with lines suggesting text -->
+  <line x1="60" y1="80" x2="85" y2="80" stroke="#7c93c0" stroke-width="2" />
+  <line x1="55" y1="90" x2="90" y2="90" stroke="#7c93c0" stroke-width="2" />
+  <line x1="50" y1="100" x2="92" y2="100" stroke="#7c93c0" stroke-width="2" />
+  <line x1="48" y1="110" x2="94" y2="110" stroke="#7c93c0" stroke-width="2" />
+  <line x1="50" y1="120" x2="90" y2="120" stroke="#7c93c0" stroke-width="2" />
+  
+  <line x1="115" y1="80" x2="140" y2="80" stroke="#7c93c0" stroke-width="2" />
+  <line x1="110" y1="90" x2="145" y2="90" stroke="#7c93c0" stroke-width="2" />
+  <line x1="108" y1="100" x2="150" y2="100" stroke="#7c93c0" stroke-width="2" />
+  <line x1="106" y1="110" x2="152" y2="110" stroke="#7c93c0" stroke-width="2" />
+  <line x1="110" y1="120" x2="150" y2="120" stroke="#7c93c0" stroke-width="2" />
+  
+  <!-- Cross symbol radiating light -->
+  <circle cx="100" cy="50" r="15" fill="#eac26b" />
+  <path d="M100 35 L100 20 M85 50 L70 50 M100 65 L100 80 M115 50 L130 50" stroke="#e9af2b" stroke-width="4" stroke-linecap="round" />
+  
+  <!-- Light rays -->
+  <path d="M85 35 L75 25 M115 35 L125 25 M85 65 L75 75 M115 65 L125 75" stroke="#e9af2b" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- DBV Text -->
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#3b5998">DBV</text>
+</svg>

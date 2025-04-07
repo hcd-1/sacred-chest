@@ -1,0 +1,18 @@
+{
+  "name": "daily-bible-verse",
+  "version": "1.0.0",
+  "description": "A simple app to display daily Bible verses with Netlify Functions",
+  "main": "script.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "esbuild": "^0.20.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

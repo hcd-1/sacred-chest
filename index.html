@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Bible Verse</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Raleway", sans-serif;
+      text-align: center;
+      padding: 25px 50px 50px 50px;
+      background-image: url('assets/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+    }
+    #logo {
+      width: 100px;
+    }
+    h1 {
+      font-family: 'Raleway', sans-serif;
+      color: #2C4A6A;
+      font-size: 2.3em;
+      margin-bottom: 10px;
+      margin-top: 15px;
+    }
+    .verse-label {
+      position: absolute;
+      top: 2px;
+      right: 5px;
+      font-size: 0.7em;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    #daily-verse {
+      font-size: 1.1em;
+      max-width: 600px;
+      margin: 10px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: relative;
+      min-height: 20px;
+      border-left: 4px solid #3498db;
+      cursor: pointer;
+    }
+    #daily-verse .verse-label {
+      color: #3498db;
+    }
+    #odd-even-verse {
+      font-size: 1.1em;
+      max-width: 600px;
+      margin: 10px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: relative;
+      min-height: 20px;
+      border-left: 4px solid #2980b9;
+      cursor: pointer;
+    }
+    #odd-even-verse .verse-label {
+      color: #2980b9;
+    }
+    #day-of-week-verse {
+      font-size: 1.1em;
+      max-width: 600px;
+      margin: 10px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.82);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: relative;
+      min-height: 20px;
+      border-left: 4px solid #1f618d;
+      cursor: pointer;
+    }
+    #day-of-week-verse .verse-label {
+      color: #1f618d;
+    }
+    #verse {
+      font-size: 1.1em;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      min-height: 20px;
+      border-left: 4px solid #96704B;
+      cursor: pointer;
+    }
+    #verse .verse-label {
+      color: #96704B;
+    }
+    /* Hidden state styles with higher specificity */
+    .verse-hidden .verse-content,
+    .verse-hidden .spinner {
+      display: none !important; /* Override inline styles */
+    }
+    .verse-hidden .verse-label {
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+      font-size: 1em;
+    }
+    strong {
+      color: #333;
+    }
+    button {
+      margin-top: 20px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    @media (max-width: 768px) {
+      body {
+        background-position: 50% 50%;
+      }
+    }
+    #current-date {
+      font-size: 1.1em;
+      color: #555;
+      margin: 10px 0;
+      font-style: italic;
+    }
+    .verse-toggle-button {
+      margin: 0 5px;
+      padding: 4px 8px;
+      font-size: 0.8em;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .verse-toggle-button:hover {
+      background-color: #2980b9;
+    }
+    .verse-toggle-button.active {
+      background-color: #1f618d;
+      border: 1px solid #fff;
+    }
+    .spinner {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @media only screen and (min-width: 769px) {
+      button {
+        font-size: 1em;
+        padding: 10px 20px;
+      }
+      #logo {
+        width: 150px;
+      }
+      #daily-verse, #odd-even-verse, #day-of-week-verse, #verse {
+        font-size: 1.2em;
+      }
+      h1 {
+        font-size: 2.5em;
+        margin-top: 26.8px;
+      }
+      body {
+        padding: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img id="logo" src="assets/logo.svg">
+  <h1>Sacred Chest</h1>
+  <p id="current-date"></p>
+  <div id="daily-verse">
+    <span class="verse-label" id="daily-label">Daily</span>
+    <div class="spinner" id="daily-spinner"></div>
+    <div id="daily-verse-content" class="verse-content">Loading daily verse...</div>
+  </div>
+  <div id="odd-even-verse" class="verse-hidden">
+    <span class="verse-label" id="odd-even-label"></span>
+    <div class="spinner" id="odd-even-spinner"></div>
+    <div id="odd-even-verse-content" class="verse-content">Loading odd/even verse...</div>
+  </div>
+  <div id="day-of-week-verse" class="verse-hidden">
+    <span class="verse-label" id="day-of-week-label"></span>
+    <div class="spinner" id="day-of-week-spinner"></div>
+    <div id="day-of-week-verse-content" class="verse-content">Loading day-of-week verse...</div>
+  </div>
+  <div id="verse" class="verse-hidden">
+    <span class="verse-label" id="day-label"></span>
+    <div class="spinner" id="verse-spinner"></div>
+    <div id="verse-content" class="verse-content">Loading...</div>
+  </div>
+  <div id="verse-toggle-buttons" style="margin: 10px 0; display: none;"></div>
+  <button id="prev-day">Previous Day</button>
+  <button id="today-verse">Today</button>
+  <button id="next-day">Next Day</button>
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    console.log("Script started");
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentDate = new Date();
+    let currentDay = currentDate.getDate().toString();
+    let versesForDay = [];
+    let currentVerseIndex = 0;
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+
+    function loadDailyVerse() {
+      const dailyVerseBlock = document.getElementById("daily-verse");
+      const dailyVerseContent = document.getElementById("daily-verse-content");
+      const dailySpinner = document.getElementById("daily-spinner");
+
+      if (!dailyVerseBlock.classList.contains("verse-hidden")) {
+        dailySpinner.style.display = "block";
+        dailyVerseContent.style.display = "none";
+      }
+
+      supabaseClient
+        .from("verses")
+        .select("*")
+        .eq("special", "daily")
+        .single()
+        .then(({ data, error }) => {
+          dailySpinner.style.display = "none";
+          if (!dailyVerseBlock.classList.contains("verse-hidden")) {
+            dailyVerseContent.style.display = "block";
+          }
+
+          if (error || !data) {
+            console.log("No daily verse found:", error);
+            dailyVerseContent.innerHTML = "No daily verse available.";
+            return;
+          }
+
+          console.log("Daily verse found:", data);
+          dailyVerseContent.innerHTML = `<strong>${data.verse}</strong>: ${data.text}`;
+        })
+        .catch(err => {
+          dailySpinner.style.display = "none";
+          if (!dailyVerseBlock.classList.contains("verse-hidden")) {
+            dailyVerseContent.style.display = "block";
+          }
+          console.error("Query for daily verse failed:", err);
+          dailyVerseContent.innerHTML = "Error loading daily verse.";
+        });
+    }
+
+    function loadOddEvenVerse(day) {
+      const oddEvenVerseBlock = document.getElementById("odd-even-verse");
+      const oddEvenVerseContent = document.getElementById("odd-even-verse-content");
+      const oddEvenSpinner = document.getElementById("odd-even-spinner");
+
+      if (!oddEvenVerseBlock.classList.contains("verse-hidden")) {
+        oddEvenSpinner.style.display = "block";
+        oddEvenVerseContent.style.display = "none";
+      }
+
+      const dayNumber = parseInt(day);
+      const specialValue = dayNumber % 2 === 0 ? "even" : "odd";
+      console.log(`Loading ${specialValue} verse for day ${day}`);
+
+      supabaseClient
+        .from("verses")
+        .select("*")
+        .eq("special", specialValue)
+        .single()
+        .then(({ data, error }) => {
+          oddEvenSpinner.style.display = "none";
+          if (!oddEvenVerseBlock.classList.contains("verse-hidden")) {
+            oddEvenVerseContent.style.display = "block";
+          }
+
+          if (error || !data) {
+            console.log(`No ${specialValue} verse found:`, error);
+            oddEvenVerseContent.innerHTML = `No ${specialValue} verse available.`;
+            return;
+          }
+
+          console.log(`${specialValue} verse found:`, data);
+          oddEvenVerseContent.innerHTML = `<strong>${data.verse}</strong>: ${data.text}`;
+        })
+        .catch(err => {
+          oddEvenSpinner.style.display = "none";
+          if (!oddEvenVerseBlock.classList.contains("verse-hidden")) {
+            oddEvenVerseContent.style.display = "block";
+          }
+          console.error(`Query for ${specialValue} verse failed:`, err);
+          oddEvenVerseContent.innerHTML = "Error loading odd/even verse.";
+        });
+    }
+
+    function loadDayOfWeekVerse(date) {
+      const dayOfWeekVerseBlock = document.getElementById("day-of-week-verse");
+      const dayOfWeekVerseContent = document.getElementById("day-of-week-verse-content");
+      const dayOfWeekSpinner = document.getElementById("day-of-week-spinner");
+
+      if (!dayOfWeekVerseBlock.classList.contains("verse-hidden")) {
+        dayOfWeekSpinner.style.display = "block";
+        dayOfWeekVerseContent.style.display = "none";
+      }
+
+      const dayOfWeekMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+      const dayOfWeek = date.getDay();
+      const specialValue = dayOfWeekMap[dayOfWeek];
+      console.log(`Loading ${specialValue} verse for day of week ${dayOfWeek}`);
+
+      supabaseClient
+        .from("verses")
+        .select("*")
+        .eq("special", specialValue)
+        .single()
+        .then(({ data, error }) => {
+          dayOfWeekSpinner.style.display = "none";
+          if (!dayOfWeekVerseBlock.classList.contains("verse-hidden")) {
+            dayOfWeekVerseContent.style.display = "block";
+          }
+
+          if (error || !data) {
+            console.log(`No ${specialValue} verse found:`, error);
+            dayOfWeekVerseContent.innerHTML = `No ${specialValue} verse available.`;
+            return;
+          }
+
+          console.log(`${specialValue} verse found:`, data);
+          dayOfWeekVerseContent.innerHTML = `<strong>${data.verse}</strong>: ${data.text}`;
+        })
+        .catch(err => {
+          dayOfWeekSpinner.style.display = "none";
+          if (!dayOfWeekVerseBlock.classList.contains("verse-hidden")) {
+            dayOfWeekVerseContent.style.display = "block";
+          }
+          console.error(`Query for ${specialValue} verse failed:`, err);
+          dayOfWeekVerseContent.innerHTML = "Error loading day-of-week verse.";
+        });
+    }
+
+    function loadVerse(day) {
+      const verseBlock = document.getElementById("verse");
+      const verseContent = document.getElementById("verse-content");
+      const verseSpinner = document.getElementById("verse-spinner");
+      const toggleButtonsDiv = document.getElementById("verse-toggle-buttons");
+
+      if (!verseBlock.classList.contains("verse-hidden")) {
+        verseSpinner.style.display = "block";
+        verseContent.style.display = "none";
+      }
+      toggleButtonsDiv.innerHTML = "";
+      console.log("Loading day of month:", day);
+
+      supabaseClient
+        .from("verses")
+        .select("*")
+        .eq("day_month", day)
+        .then(({ data, error }) => {
+          verseSpinner.style.display = "none";
+          if (!verseBlock.classList.contains("verse-hidden")) {
+            verseContent.style.display = "block";
+            toggleButtonsDiv.style.display = "block";
+          } else {
+            toggleButtonsDiv.style.display = "none";
+          }
+
+          if (error || !data || data.length === 0) {
+            console.log("No verses found for day_month:", day);
+            verseContent.innerHTML = "No verse available for this day.";
+            toggleButtonsDiv.innerHTML = "";
+            return;
+          }
+
+          console.log("Verses found for day_month:", data);
+          versesForDay = data.sort((a, b) => parseInt(a.special) - parseInt(b.special));
+          currentVerseIndex = 0;
+
+          const selectedVerse = versesForDay[currentVerseIndex];
+          verseContent.innerHTML = `<strong>${selectedVerse.verse}</strong>: ${selectedVerse.text}`;
+
+          versesForDay.forEach((verse, index) => {
+            const button = document.createElement("button");
+            button.textContent = `Verse ${verse.special}`;
+            button.className = "verse-toggle-button";
+            button.dataset.index = index;
+
+            if (index === currentVerseIndex) {
+              button.classList.add("active");
+            }
+
+            button.addEventListener("click", (e) => {
+              e.stopPropagation();
+              currentVerseIndex = parseInt(button.dataset.index);
+              const newVerse = versesForDay[currentVerseIndex];
+              verseContent.innerHTML = `<strong>${newVerse.verse}</strong>: ${newVerse.text}`;
+
+              document.querySelectorAll(".verse-toggle-button").forEach(btn => {
+                btn.classList.remove("active");
+              });
+              button.classList.add("active");
+            });
+
+            toggleButtonsDiv.appendChild(button);
+          });
+        })
+        .catch(err => {
+          verseSpinner.style.display = "none";
+          if (!verseBlock.classList.contains("verse-hidden")) {
+            verseContent.style.display = "block";
+          }
+          toggleButtonsDiv.style.display = "none";
+          console.error("Query failed:", err);
+          verseContent.innerHTML = "Error loading verse.";
+          toggleButtonsDiv.innerHTML = "";
+        });
+    }
+
+    function updateLabels(date) {
+      const dayNumber = date.getDate();
+      const dayOfWeekMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const dayOfWeek = dayOfWeekMap[date.getDay()];
+      
+      document.getElementById("daily-label").textContent = "Daily";
+      document.getElementById("odd-even-label").textContent = 
+        dayNumber % 2 === 0 ? "Even" : "Odd";
+      document.getElementById("day-of-week-label").textContent = dayOfWeek;
+      const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+      document.getElementById("day-label").textContent = 
+        `${monthNames[date.getMonth()]} ${dayNumber}`;
+    }
+
+    function toggleVerseVisibility(verseBlock) {
+      verseBlock.classList.toggle("verse-hidden");
+      const content = verseBlock.querySelector(".verse-content");
+      const spinner = verseBlock.querySelector(".spinner");
+      
+      if (verseBlock.classList.contains("verse-hidden")) {
+        content.style.display = "none";
+        spinner.style.display = "none";
+      } else {
+        content.style.display = "block";
+        spinner.style.display = "none";
+      }
+
+      if (verseBlock.id === "verse") {
+        const toggleButtonsDiv = document.getElementById("verse-toggle-buttons");
+        toggleButtonsDiv.style.display = verseBlock.classList.contains("verse-hidden") ? "none" : "block";
+      }
+    }
+
+    const waitForSupabase = setInterval(() => {
+      if (typeof supabase !== "undefined") {
+        console.log("Supabase is defined, loading verses");
+        clearInterval(waitForSupabase);
+
+        updateLabels(currentDate);
+        loadDailyVerse();
+        loadOddEvenVerse(currentDay);
+        loadDayOfWeekVerse(currentDate);
+        loadVerse(currentDay);
+
+        const verseBlocks = [
+          document.getElementById("daily-verse"),
+          document.getElementById("odd-even-verse"),
+          document.getElementById("day-of-week-verse"),
+          document.getElementById("verse")
+        ];
+        verseBlocks.forEach(block => {
+          block.addEventListener("click", () => toggleVerseVisibility(block));
+        });
+
+        document.getElementById("next-day").addEventListener("click", () => {
+          currentDate.setDate(currentDate.getDate() + 1);
+          currentDay = currentDate.getDate().toString();
+          document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+          updateLabels(currentDate);
+          loadOddEvenVerse(currentDay);
+          loadDayOfWeekVerse(currentDate);
+          loadVerse(currentDay);
+        });
+
+        document.getElementById("prev-day").addEventListener("click", () => {
+          currentDate.setDate(currentDate.getDate() - 1);
+          currentDay = currentDate.getDate().toString();
+          document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+          updateLabels(currentDate);
+          loadOddEvenVerse(currentDay);
+          loadDayOfWeekVerse(currentDate);
+          loadVerse(currentDay);
+        });
+
+        document.getElementById("today-verse").addEventListener("click", () => {
+          currentDate = new Date();
+          currentDay = currentDate.getDate().toString();
+          document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+          updateLabels(currentDate);
+          loadOddEvenVerse(currentDay);
+          loadDayOfWeekVerse(currentDate);
+          loadVerse(currentDay);
+        });
+      } else {
+        console.log("Waiting for Supabase...");
+      }
+    }, 500);
+  </script> -->
+
+  <script src="dist/bundle.js" type="module"></script>
+
+</body>
+</html>
