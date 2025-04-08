@@ -13,7 +13,7 @@ build({
 }).then(() => {
   cpSync('index.html', 'dist/index.html');
   cpSync('assets/logo.svg', 'dist/logo.svg');
-  cpSync('assets/background.jpg', '/dist/background.jpg');
+  cpSync('assets/background.jpg', 'dist/background.jpg');
   console.log('Build done! dist/ contents:', require('fs').readdirSync('dist'));
 }).catch((error) => {
   console.error('Build failed:', error);
