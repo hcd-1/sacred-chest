@@ -1,18 +1,20 @@
-// build.js
-require('dotenv').config(); // Add this at the top
-const esbuild = require('esbuild');
-const {cpSync} = require('fs');
+const { build } = require('esbuild');
+const { cpSync } = require('fs');
+require('dotenv').config();
 
-esbuild.build({
-  entryPoints: ['script.js'], // Your main JavaScript file
-  outfile: 'dist/bundle.js', // Where the finished file goes
+build({
+  entryPoints: ['script.js'],
+  outfile: 'dist/bundle.js',
   bundle: true,
   define: {
     'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
     'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY),
   },
 }).then(() => {
-    cpSync('index.html', 'dist/index.html');
-    cpSync('assets/logo.svg', 'dist/logo.svg'); // Add this line
-    console.log('Build done!')})
-  .catch((error) => console.error('Build failed:', error));
+  cpSync('index.html', 'dist/index.html');
+  cpSync('assets/logo.svg', 'dist/logo.svg');
+  console.log('Build done! dist/ contents:', require('fs').readdirSync('dist'));
+}).catch((error) => {
+  console.error('Build failed:', error);
+  process.exit(1); // Exit with error code to make it obvious
+});

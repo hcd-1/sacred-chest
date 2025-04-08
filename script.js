@@ -1,7 +1,4 @@
 // script.js
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 console.log("Script started");
 
 let currentDate = new Date();
@@ -22,19 +19,19 @@ function loadDailyVerse() {
     dailyVerseContent.style.display = "none";
   }
 
-  supabaseClient
-    .from("verses")
-    .select("*")
-    .eq("special", "daily")
-    .single()
-    .then(({ data, error }) => {
+  fetch('/.netlify/functions/fetch-verse?type=daily')
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
       dailySpinner.style.display = "none";
       if (!dailyVerseBlock.classList.contains("verse-hidden")) {
         dailyVerseContent.style.display = "block";
       }
 
-      if (error || !data) {
-        console.log("No daily verse found:", error);
+      if (data.error || !data) {
+        console.log("No daily verse found:", data.error);
         dailyVerseContent.innerHTML = "No daily verse available.";
         return;
       }
@@ -66,19 +63,19 @@ function loadOddEvenVerse(day) {
   const specialValue = dayNumber % 2 === 0 ? "even" : "odd";
   console.log(`Loading ${specialValue} verse for day ${day}`);
 
-  supabaseClient
-    .from("verses")
-    .select("*")
-    .eq("special", specialValue)
-    .single()
-    .then(({ data, error }) => {
+  fetch(`/.netlify/functions/fetch-verse?type=odd-even&day=${day}`)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
       oddEvenSpinner.style.display = "none";
       if (!oddEvenVerseBlock.classList.contains("verse-hidden")) {
         oddEvenVerseContent.style.display = "block";
       }
 
-      if (error || !data) {
-        console.log(`No ${specialValue} verse found:`, error);
+      if (data.error || !data) {
+        console.log(`No ${specialValue} verse found:`, data.error);
         oddEvenVerseContent.innerHTML = `No ${specialValue} verse available.`;
         return;
       }
@@ -106,29 +103,27 @@ function loadDayOfWeekVerse(date) {
     dayOfWeekVerseContent.style.display = "none";
   }
 
-  const dayOfWeekMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const dayOfWeek = date.getDay();
-  const specialValue = dayOfWeekMap[dayOfWeek];
-  console.log(`Loading ${specialValue} verse for day of week ${dayOfWeek}`);
+  const dateString = date.toISOString().split('T')[0];
+  console.log(`Loading day of week verse for date ${dateString}`);
 
-  supabaseClient
-    .from("verses")
-    .select("*")
-    .eq("special", specialValue)
-    .single()
-    .then(({ data, error }) => {
+  fetch(`/.netlify/functions/fetch-verse?type=day-of-week&day=${dateString}`)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
       dayOfWeekSpinner.style.display = "none";
       if (!dayOfWeekVerseBlock.classList.contains("verse-hidden")) {
         dayOfWeekVerseContent.style.display = "block";
       }
 
-      if (error || !data) {
-        console.log(`No ${specialValue} verse found:`, error);
-        dayOfWeekVerseContent.innerHTML = `No ${specialValue} verse available.`;
+      if (data.error || !data) {
+        console.log(`No day of week verse found:`, data.error);
+        dayOfWeekVerseContent.innerHTML = `No day of week verse available.`;
         return;
       }
 
-      console.log(`${specialValue} verse found:`, data);
+      console.log(`Day of week verse found:`, data);
       dayOfWeekVerseContent.innerHTML = `<strong>${data.verse}</strong>: ${data.text}`;
     })
     .catch(err => {
@@ -136,7 +131,7 @@ function loadDayOfWeekVerse(date) {
       if (!dayOfWeekVerseBlock.classList.contains("verse-hidden")) {
         dayOfWeekVerseContent.style.display = "block";
       }
-      console.error(`Query for ${specialValue} verse failed:`, err);
+      console.error(`Query for day of week verse failed:`, err);
       dayOfWeekVerseContent.innerHTML = "Error loading day-of-week verse.";
     });
 }
@@ -154,11 +149,12 @@ function loadVerse(day) {
   toggleButtonsDiv.innerHTML = "";
   console.log("Loading day of month:", day);
 
-  supabaseClient
-    .from("verses")
-    .select("*")
-    .eq("day_month", day)
-    .then(({ data, error }) => {
+  fetch(`/.netlify/functions/fetch-verse?type=day-of-month&day=${day}`)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
       verseSpinner.style.display = "none";
       if (!verseBlock.classList.contains("verse-hidden")) {
         verseContent.style.display = "block";
@@ -167,7 +163,7 @@ function loadVerse(day) {
         toggleButtonsDiv.style.display = "none";
       }
 
-      if (error || !data || data.length === 0) {
+      if (data.error || !data || data.length === 0) {
         console.log("No verses found for day_month:", day);
         verseContent.innerHTML = "No verse available for this day.";
         toggleButtonsDiv.innerHTML = "";
@@ -252,57 +248,49 @@ function toggleVerseVisibility(verseBlock) {
   }
 }
 
-const waitForSupabase = setInterval(() => {
-  if (typeof supabase !== "undefined") {
-    console.log("Supabase is defined, loading verses");
-    clearInterval(waitForSupabase);
+// Initial load
+updateLabels(currentDate);
+loadDailyVerse();
+loadOddEvenVerse(currentDay);
+loadDayOfWeekVerse(currentDate);
+loadVerse(currentDay);
 
-    updateLabels(currentDate);
-    loadDailyVerse();
-    loadOddEvenVerse(currentDay);
-    loadDayOfWeekVerse(currentDate);
-    loadVerse(currentDay);
+const verseBlocks = [
+  document.getElementById("daily-verse"),
+  document.getElementById("odd-even-verse"),
+  document.getElementById("day-of-week-verse"),
+  document.getElementById("verse")
+];
+verseBlocks.forEach(block => {
+  block.addEventListener("click", () => toggleVerseVisibility(block));
+});
 
-    const verseBlocks = [
-      document.getElementById("daily-verse"),
-      document.getElementById("odd-even-verse"),
-      document.getElementById("day-of-week-verse"),
-      document.getElementById("verse")
-    ];
-    verseBlocks.forEach(block => {
-      block.addEventListener("click", () => toggleVerseVisibility(block));
-    });
+document.getElementById("next-day").addEventListener("click", () => {
+  currentDate.setDate(currentDate.getDate() + 1);
+  currentDay = currentDate.getDate().toString();
+  document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+  updateLabels(currentDate);
+  loadOddEvenVerse(currentDay);
+  loadDayOfWeekVerse(currentDate);
+  loadVerse(currentDay);
+});
 
-    document.getElementById("next-day").addEventListener("click", () => {
-      currentDate.setDate(currentDate.getDate() + 1);
-      currentDay = currentDate.getDate().toString();
-      document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
-      updateLabels(currentDate);
-      loadOddEvenVerse(currentDay);
-      loadDayOfWeekVerse(currentDate);
-      loadVerse(currentDay);
-    });
+document.getElementById("prev-day").addEventListener("click", () => {
+  currentDate.setDate(currentDate.getDate() - 1);
+  currentDay = currentDate.getDate().toString();
+  document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+  updateLabels(currentDate);
+  loadOddEvenVerse(currentDay);
+  loadDayOfWeekVerse(currentDate);
+  loadVerse(currentDay);
+});
 
-    document.getElementById("prev-day").addEventListener("click", () => {
-      currentDate.setDate(currentDate.getDate() - 1);
-      currentDay = currentDate.getDate().toString();
-      document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
-      updateLabels(currentDate);
-      loadOddEvenVerse(currentDay);
-      loadDayOfWeekVerse(currentDate);
-      loadVerse(currentDay);
-    });
-
-    document.getElementById("today-verse").addEventListener("click", () => {
-      currentDate = new Date();
-      currentDay = currentDate.getDate().toString();
-      document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
-      updateLabels(currentDate);
-      loadOddEvenVerse(currentDay);
-      loadDayOfWeekVerse(currentDate);
-      loadVerse(currentDay);
-    });
-  } else {
-    console.log("Waiting for Supabase...");
-  }
-}, 500);
+document.getElementById("today-verse").addEventListener("click", () => {
+  currentDate = new Date();
+  currentDay = currentDate.getDate().toString();
+  document.getElementById("current-date").textContent = currentDate.toLocaleDateString('en-US', options);
+  updateLabels(currentDate);
+  loadOddEvenVerse(currentDay);
+  loadDayOfWeekVerse(currentDate);
+  loadVerse(currentDay);
+});
