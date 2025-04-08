@@ -1,5 +1,5 @@
 {
-  "name": "daily-bible-verse",
+  "name": "sacred-chest",
   "version": "1.0.0",
   "description": "A simple app to display daily Bible verses with Netlify Functions",
   "main": "script.js",
